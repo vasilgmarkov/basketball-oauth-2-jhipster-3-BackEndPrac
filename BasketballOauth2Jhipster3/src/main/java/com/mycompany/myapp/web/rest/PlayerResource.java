@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.mycompany.myapp.domain.Player;
 import com.mycompany.myapp.repository.PlayerRepository;
 import com.mycompany.myapp.web.rest.util.HeaderUtil;
+import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +17,16 @@ import javax.inject.Inject;
 import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 /**
@@ -27,10 +37,10 @@ import java.util.Optional;
 public class PlayerResource {
 
     private final Logger log = LoggerFactory.getLogger(PlayerResource.class);
-        
+
     @Inject
     private PlayerRepository playerRepository;
-    
+
     /**
      * POST  /players : Create a new player.
      *
@@ -127,5 +137,145 @@ public class PlayerResource {
         playerRepository.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert("player", id.toString())).build();
     }
+
+
+    /** Pol y Vasil
+     * GET  /apuestass -> get players by name.
+     */
+    @RequestMapping(value = "/players/byName/{name}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Player>> getPlayerByleagueName(@PathVariable String name){
+        log.debug("REST request to get Jugador : {}", name);
+        List<Player> player =playerRepository.findByNameEquals(name);
+
+        return Optional.ofNullable(player)
+            .map(result -> new ResponseEntity<>(
+                result,
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+
+    /** Pol y Vasil
+     * GET  /tp-by-canastas -> get all top players from a canstas filter.
+     */
+
+
+
+    @RequestMapping(value = "/bp-by-canastas/{canastasTotales}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Player>> get(@PathVariable int canastasTotales) {
+        log.debug("REST request to get Jugador : {}", canastasTotales);
+        return Optional.ofNullable(playerRepository.findAllByBasketsGreaterThanEqualOrderByBasketsDesc(canastasTotales))
+            .map(jugador -> new ResponseEntity<>(
+                jugador,
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+
+
+
+    // fecha > fecha usuario, fecha < fecha usuario , fecha > Between < fecha usuario
+
+
+    /** Pol y Vasil
+     * GET  /tp-by-date -> get all top players by date > filter.
+     */
+
+
+
+    @RequestMapping(value = "/fet-by-date/{fecha}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Player>> getgreater(@PathVariable String fecha) {
+        String[] tokens = fecha.split("-");
+
+        String data = tokens[0]+"."+tokens[1]+"."+tokens[2];
+
+        DateTimeFormatter germanFormatter = DateTimeFormatter.ofLocalizedDate(
+            FormatStyle.MEDIUM).withLocale(Locale.GERMAN);
+
+        LocalDate xmas = LocalDate.parse(data, germanFormatter);
+
+        log.debug("REST request to get Jugador : {}", fecha);
+        return Optional.ofNullable(playerRepository.findAllByFechaNacimientoGreaterThanOrderByBasketsDesc(xmas))
+            .map(jugador -> new ResponseEntity<>(
+                jugador,
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+
+
+    /** Pol y Vasil
+     * GET  /tp-by-date -> get all top players by date < filter.
+     */
+
+
+
+    @RequestMapping(value = "/fet-by-datel/{fecha}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Player>> getless(@PathVariable String fecha) {
+        String[] tokens = fecha.split("-");
+
+        String data = tokens[0]+"."+tokens[1]+"."+tokens[2];
+
+        DateTimeFormatter germanFormatter = DateTimeFormatter.ofLocalizedDate(
+            FormatStyle.MEDIUM).withLocale(Locale.GERMAN);
+
+        LocalDate xmas = LocalDate.parse(data, germanFormatter);
+
+        log.debug("REST request to get Jugador : {}", fecha);
+        return Optional.ofNullable(playerRepository.findAllByFechaNacimientoLessThanOrderByBasketsDesc(xmas))
+            .map(jugador -> new ResponseEntity<>(
+                jugador,
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+
+
+    /** Pol y Vasil
+     * GET  /tp-by-date -> get all top players by date < filter.
+     */
+
+
+
+    @RequestMapping(value = "/fet-by-datebw/{fecha}/{fecha2}",
+        method = RequestMethod.GET,
+        produces = MediaType.APPLICATION_JSON_VALUE)
+    @Timed
+    public ResponseEntity<List<Player>> getbw(@PathVariable String fecha,@PathVariable String fecha2) {
+        String[] tokens = fecha.split("-");
+
+        String data = tokens[0]+"."+tokens[1]+"."+tokens[2];
+
+        String[] tokens1 = fecha2.split("-");
+
+        String data1 = tokens1[0]+"."+tokens1[1]+"."+tokens1[2];
+
+        DateTimeFormatter germanFormatter = DateTimeFormatter.ofLocalizedDate(
+            FormatStyle.MEDIUM).withLocale(Locale.GERMAN);
+
+        LocalDate xmas = LocalDate.parse(data, germanFormatter);
+        LocalDate xmas1 = LocalDate.parse(data1, germanFormatter);
+
+        log.debug("REST request to get Jugador : {}", fecha);
+        return Optional.ofNullable(playerRepository.findAllByFechaNacimientoBetweenOrderByBasketsDesc(xmas,xmas1))
+            .map(jugador -> new ResponseEntity<>(
+                jugador,
+                HttpStatus.OK))
+            .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+
 
 }

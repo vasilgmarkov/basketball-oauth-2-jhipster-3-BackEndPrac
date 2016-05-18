@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,6 +59,9 @@ public class PlayerResourceIntTest {
     private static final PosicionesJugadores DEFAULT_POSICION_CAMPO = PosicionesJugadores.Alero;
     private static final PosicionesJugadores UPDATED_POSICION_CAMPO = PosicionesJugadores.Pivot;
 
+    private static final LocalDate DEFAULT_FECHA_NACIMIENTO = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_FECHA_NACIMIENTO = LocalDate.now(ZoneId.systemDefault());
+
     @Inject
     private PlayerRepository playerRepository;
 
@@ -88,6 +93,7 @@ public class PlayerResourceIntTest {
         player.setRebotes(DEFAULT_REBOTES);
         player.setAsistencias(DEFAULT_ASISTENCIAS);
         player.setPosicionCampo(DEFAULT_POSICION_CAMPO);
+        player.setFechaNacimiento(DEFAULT_FECHA_NACIMIENTO);
     }
 
     @Test
@@ -111,6 +117,7 @@ public class PlayerResourceIntTest {
         assertThat(testPlayer.getRebotes()).isEqualTo(DEFAULT_REBOTES);
         assertThat(testPlayer.getAsistencias()).isEqualTo(DEFAULT_ASISTENCIAS);
         assertThat(testPlayer.getPosicionCampo()).isEqualTo(DEFAULT_POSICION_CAMPO);
+        assertThat(testPlayer.getFechaNacimiento()).isEqualTo(DEFAULT_FECHA_NACIMIENTO);
     }
 
     @Test
@@ -151,6 +158,24 @@ public class PlayerResourceIntTest {
 
     @Test
     @Transactional
+    public void checkFechaNacimientoIsRequired() throws Exception {
+        int databaseSizeBeforeTest = playerRepository.findAll().size();
+        // set the field null
+        player.setFechaNacimiento(null);
+
+        // Create the Player, which fails.
+
+        restPlayerMockMvc.perform(post("/api/players")
+                .contentType(TestUtil.APPLICATION_JSON_UTF8)
+                .content(TestUtil.convertObjectToJsonBytes(player)))
+                .andExpect(status().isBadRequest());
+
+        List<Player> players = playerRepository.findAll();
+        assertThat(players).hasSize(databaseSizeBeforeTest);
+    }
+
+    @Test
+    @Transactional
     public void getAllPlayers() throws Exception {
         // Initialize the database
         playerRepository.saveAndFlush(player);
@@ -164,7 +189,8 @@ public class PlayerResourceIntTest {
                 .andExpect(jsonPath("$.[*].baskets").value(hasItem(DEFAULT_BASKETS)))
                 .andExpect(jsonPath("$.[*].rebotes").value(hasItem(DEFAULT_REBOTES)))
                 .andExpect(jsonPath("$.[*].asistencias").value(hasItem(DEFAULT_ASISTENCIAS)))
-                .andExpect(jsonPath("$.[*].posicionCampo").value(hasItem(DEFAULT_POSICION_CAMPO.toString())));
+                .andExpect(jsonPath("$.[*].posicionCampo").value(hasItem(DEFAULT_POSICION_CAMPO.toString())))
+                .andExpect(jsonPath("$.[*].fechaNacimiento").value(hasItem(DEFAULT_FECHA_NACIMIENTO.toString())));
     }
 
     @Test
@@ -182,7 +208,8 @@ public class PlayerResourceIntTest {
             .andExpect(jsonPath("$.baskets").value(DEFAULT_BASKETS))
             .andExpect(jsonPath("$.rebotes").value(DEFAULT_REBOTES))
             .andExpect(jsonPath("$.asistencias").value(DEFAULT_ASISTENCIAS))
-            .andExpect(jsonPath("$.posicionCampo").value(DEFAULT_POSICION_CAMPO.toString()));
+            .andExpect(jsonPath("$.posicionCampo").value(DEFAULT_POSICION_CAMPO.toString()))
+            .andExpect(jsonPath("$.fechaNacimiento").value(DEFAULT_FECHA_NACIMIENTO.toString()));
     }
 
     @Test
@@ -208,6 +235,7 @@ public class PlayerResourceIntTest {
         updatedPlayer.setRebotes(UPDATED_REBOTES);
         updatedPlayer.setAsistencias(UPDATED_ASISTENCIAS);
         updatedPlayer.setPosicionCampo(UPDATED_POSICION_CAMPO);
+        updatedPlayer.setFechaNacimiento(UPDATED_FECHA_NACIMIENTO);
 
         restPlayerMockMvc.perform(put("/api/players")
                 .contentType(TestUtil.APPLICATION_JSON_UTF8)
@@ -223,6 +251,7 @@ public class PlayerResourceIntTest {
         assertThat(testPlayer.getRebotes()).isEqualTo(UPDATED_REBOTES);
         assertThat(testPlayer.getAsistencias()).isEqualTo(UPDATED_ASISTENCIAS);
         assertThat(testPlayer.getPosicionCampo()).isEqualTo(UPDATED_POSICION_CAMPO);
+        assertThat(testPlayer.getFechaNacimiento()).isEqualTo(UPDATED_FECHA_NACIMIENTO);
     }
 
     @Test

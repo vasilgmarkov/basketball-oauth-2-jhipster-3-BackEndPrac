@@ -78,6 +78,7 @@
                                 rebotes: null,
                                 asistencias: null,
                                 posicionCampo: null,
+                                fechaNacimiento: null,
                                 id: null
                             };
                         }

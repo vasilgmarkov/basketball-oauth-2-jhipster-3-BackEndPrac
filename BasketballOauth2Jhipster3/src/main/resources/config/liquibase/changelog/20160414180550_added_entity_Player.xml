@@ -41,8 +41,19 @@
                 <constraints nullable="false" />
             </column>
             
+            <column name="fecha_nacimiento" type="date">
+                <constraints nullable="false" />
+            </column>
+            
+            <column name="equipo_id" type="bigint"/>
             <!-- jhipster-needle-liquibase-add-column - Jhipster will add columns here, do not remove-->
         </createTable>
         
+        <addForeignKeyConstraint baseColumnNames="equipo_id"
+                                 baseTableName="player"
+                                 constraintName="fk_player_equipo_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="equipo"/>
+
     </changeSet>
 </databaseChangeLog>

@@ -24,6 +24,8 @@
                     <th><span translate="basketballOauth2Jhipster3App.player.rebotes">Rebotes</span></th>
                     <th><span translate="basketballOauth2Jhipster3App.player.asistencias">Asistencias</span></th>
                     <th><span translate="basketballOauth2Jhipster3App.player.posicionCampo">PosicionCampo</span></th>
+                    <th><span translate="basketballOauth2Jhipster3App.player.fechaNacimiento">FechaNacimiento</span></th>
+                    <th><span translate="basketballOauth2Jhipster3App.player.equipo">equipo</span></th>
                     <th></th>
                 </tr>
             </thead>
@@ -35,6 +37,10 @@
                     <td>{{player.rebotes}}</td>
                     <td>{{player.asistencias}}</td>
                     <td translate="{{'basketballOauth2Jhipster3App.PosicionesJugadores.' + player.posicionCampo}}">{{player.posicionCampo}}</td>
+                        <td>{{player.fechaNacimiento | date:'mediumDate'}}</td>
+                    <td>
+                        <a ui-sref="equipo-detail({id:player.equipo.id})">{{player.equipo.nombre}}</a>
+                    </td>
                     <td class="text-right">
                         <div class="btn-group flex-btn-group-container">
                             <button type="submit"

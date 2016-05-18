@@ -8,6 +8,7 @@
             "entities": {
                 "main": "Entities",
                 "player": "Player",
+                "equipo": "Equipo",
                 "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)"
             },
             "account": {

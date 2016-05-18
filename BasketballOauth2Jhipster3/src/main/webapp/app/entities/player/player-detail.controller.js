@@ -5,9 +5,9 @@
         .module('basketballOauth2Jhipster3App')
         .controller('PlayerDetailController', PlayerDetailController);
 
-    PlayerDetailController.$inject = ['$scope', '$rootScope', '$stateParams', 'entity', 'Player'];
+    PlayerDetailController.$inject = ['$scope', '$rootScope', '$stateParams', 'entity', 'Player', 'Equipo'];
 
-    function PlayerDetailController($scope, $rootScope, $stateParams, entity, Player) {
+    function PlayerDetailController($scope, $rootScope, $stateParams, entity, Player, Equipo) {
         var vm = this;
         vm.player = entity;
         vm.load = function (id) {

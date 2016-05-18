@@ -1,5 +1,11 @@
 {
-    "relationships": [],
+    "relationships": [{
+        "relationshipId": 1,
+        "relationshipName": "equipo",
+        "otherEntityName": "equipo",
+        "relationshipType": "many-to-one",
+        "otherEntityField": "nombre"
+    }],
     "fields": [
         {
             "fieldName": "name",
@@ -36,6 +42,13 @@
             "fieldName": "posicionCampo",
             "fieldType": "PosicionesJugadores",
             "fieldValues": "Alero,Pivot,Base",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "fechaNacimiento",
+            "fieldType": "LocalDate",
             "fieldValidateRules": [
                 "required"
             ]

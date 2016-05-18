@@ -28,6 +28,16 @@
             <span translate="{{'basketballOauth2Jhipster3App.PosicionesJugadores.' + vm.player.posicionCampo}}">{{vm.player.posicionCampo}}</span>
         </dd>
         <hr>
+        <dt><span translate="basketballOauth2Jhipster3App.player.fechaNacimiento">FechaNacimiento</dt></dt>
+        <dd>
+            <span>{{vm.player.fechaNacimiento | date:'mediumDate'}}</span>
+        </dd>
+        <hr>
+        <dt><span translate="basketballOauth2Jhipster3App.player.equipo">equipo</span></dt>
+        <dd>
+            <a ui-sref="equipo-detail({id:vm.player.equipo.id})">{{vm.player.equipo.nombre}}</a>
+        </dd>
+        <hr>
     </dl>
 
     <button type="submit"

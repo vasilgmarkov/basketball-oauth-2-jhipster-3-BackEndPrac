@@ -5,11 +5,12 @@
         .module('basketballOauth2Jhipster3App')
         .controller('PlayerDialogController', PlayerDialogController);
 
-    PlayerDialogController.$inject = ['$scope', '$stateParams', '$uibModalInstance', 'entity', 'Player'];
+    PlayerDialogController.$inject = ['$scope', '$stateParams', '$uibModalInstance', 'entity', 'Player', 'Equipo'];
 
-    function PlayerDialogController ($scope, $stateParams, $uibModalInstance, entity, Player) {
+    function PlayerDialogController ($scope, $stateParams, $uibModalInstance, entity, Player, Equipo) {
         var vm = this;
         vm.player = entity;
+        vm.equipos = Equipo.query();
         vm.load = function(id) {
             Player.get({id : id}, function(result) {
                 vm.player = result;
@@ -37,6 +38,13 @@
 
         vm.clear = function() {
             $uibModalInstance.dismiss('cancel');
+        };
+
+        vm.datePickerOpenStatus = {};
+        vm.datePickerOpenStatus.fechaNacimiento = false;
+
+        vm.openCalendar = function(date) {
+            vm.datePickerOpenStatus[date] = true;
         };
     }
 })();
